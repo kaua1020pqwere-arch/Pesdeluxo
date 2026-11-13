@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pés de Luxo - Monique Eva</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif}
+body{background:#fff8f5;color:#333}
+header{background:#d6336c;color:#fff;text-align:center;padding:25px 15px}
+.logo{font-size:2rem;font-weight:bold;letter-spacing:2px}
+.slogan{font-size:.9rem;margin-top:5px;opacity:.9}
+.banner{background:linear-gradient(135deg,#ffb3c6,#d6336c);color:#fff;text-align:center;padding:45px 20px}
+.banner h1{font-size:1.6rem;margin-bottom:8px}
+.produtos{padding:35px 15px;max-width:1100px;margin:auto}
+.produtos h2{text-align:center;margin-bottom:22px;color:#d6336c}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:15px}
+.card{background:#fff;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.08);overflow:hidden;text-align:center;padding-bottom:12px;transition:transform .2s}
+.card:hover{transform:translateY(-4px)}
+.card img{width:100%;height:160px;object-fit:cover;background:#fce4ec}
+.card h3{margin:10px 0 4px;font-size:.95rem}
+.card .preco{color:#d6336c;font-weight:bold;font-size:1.1rem}
+.card button{margin-top:8px;background:#d6336c;color:#fff;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;font-weight:bold}
+.card button:hover{background:#b02a56}
+.carrinho{background:#fff;max-width:600px;margin:15px auto 35px;padding:22px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.08)}
+.carrinho h2{color:#d6336c;margin-bottom:12px;text-align:center}
+#listaCarrinho{list-style:none;margin-bottom:12px}
+#listaCarrinho li{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px dashed #eee;font-size:.9rem}
+.total{font-weight:bold;text-align:right;margin-bottom:12px;font-size:1.05rem}
+#finalizar{width:100%;background:#25d366;color:#fff;border:none;padding:13px;border-radius:8px;font-size:1rem;font-weight:bold;cursor:pointer}
+#finalizar:hover{background:#1ebe5a}
+footer{background:#333;color:#fff;text-align:center;padding:18px;font-size:.85rem}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Pés de Luxo</div>
+  <p class="slogan">Conforto e estilo — por Monique Eva</p>
+</header>
+
+<section class="banner">
+  <h1>Chinelos que combinam com você</h1>
+  <p>Modelos exclusivos, conforto garantido e entrega rápida.</p>
+</section>
+
+<section class="produtos">
+  <h2>Nossos Chinelos</h2>
+  <div class="grid" id="gridProdutos"></div>
+</section>
+
+<section class="carrinho">
+  <h2>Seu Carrinho</h2>
+  <ul id="listaCarrinho"></ul>
+  <p class="total">Total: <span id="total">R$ 0,00</span></p>
+  <button id="finalizar">Finalizar pelo WhatsApp</button>
+</section>
+
+<footer>
+  <p>© 2026 Pés de Luxo — Monique Eva</p>
+  <p>WhatsApp: (81) 98648-2202</p>
+</footer>
+
+<script>
+const produtos=[
+ {id:1,nome:"Chinelo Rosa Glam",preco:59.90,img:"https://images.unsplash.com/photo-1603487742131-4160ec999306?w=400"},
+ {id:2,nome:"Chinelo Nude Elegance",preco:69.90,img:"https://images.unsplash.com/photo-1562273138-f46be4ebdf33?w=400"},
+ {id:3,nome:"Chinelo Preto Luxo",preco:64.90,img:"https://images.unsplash.com/photo-1608256246200-53e635b5b65f?w=400"},
+ {id:4,nome:"Chinelo Dourado Premium",preco:79.90,img:"https://images.unsplash.com/photo-1603808033192-082d6919d3e1?w=400"}
+];
+let carrinho=[];
+const grid=document.getElementById("gridProdutos");
+produtos.forEach(p=>{
+ const c=document.createElement("div");
+ c.className="card";
+ c.innerHTML=`<img src="${p.img}" alt="${p.nome}"><h3>${p.nome}</h3><p class="preco">R$ ${p.preco.toFixed(2).replace('.',',')}</p><button onclick="adicionar(${p.id})">Comprar</button>`;
+ grid.appendChild(c);
+});
+function adicionar(id){
+ const p=produtos.find(x=>x.id===id);
+ const i=carrinho.find(x=>x.id===id);
+ if(i){i.qtd++}else{carrinho.push({...p,qtd:1})}
+ atualizarCarrinho();
+}
+function atualizarCarrinho(){
+ const lista=document.getElementById("listaCarrinho");
+ lista.innerHTML="";
+ let total=0;
+ carrinho.forEach(item=>{
+  const sub=item.preco*item.qtd;
+  total+=sub;
+  const li=document.createElement("li");
+  li.innerHTML=`<span>${item.qtd}x ${item.nome}</span><span>R$ ${sub.toFixed(2).replace('.',',')}</span>`;
+  lista.appendChild(li);
+ });
+ document.getElementById("total").textContent=`R$ ${total.toFixed(2).replace('.',',')}`;
+}
+document.getElementById("finalizar").addEventListener("click",()=>{
+ if(carrinho.length===0){alert("Seu carrinho está vazio!");return}
+ let msg="Olá, Monique Eva! Quero comprar os seguintes chinelos:%0A%0A";
+ let total=0;
+ carrinho.forEach(item=>{
+  const sub=item.preco*item.qtd;
+  total+=sub;
+  msg+=`- ${item.qtd}x ${item.nome} — R$ ${sub.toFixed(2).replace('.',',')}%0A`;
+ });
+ msg+=`%0A*Total: R$ ${total.toFixed(2).replace('.',',')}*`;
+ const numero="5581986482202";
+ window.open(`https://wa.me/${numero}?text=${msg}`,"_blank");
+});
+</script>
+
+</body>
+</html>
